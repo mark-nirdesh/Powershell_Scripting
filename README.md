@@ -84,7 +84,7 @@
     > `This script uses `arp -a` command to retrieve the ARP table, which contains IP address-to-MAC address mappings store it into excel file at changed directory.`
     > 
     
-    ## Install Prerequisite on the HOST machine to deploy the script = SetupAutomation.ps1
+   
     
 
 ## Installs necessary modules on the Host machine  = prerequisite.ps1
@@ -195,7 +195,7 @@ Run this script with ADMIN privileges.
 ## Execute the Deployment
 
 <aside>
-💡**Run the Deployment Script**
+💡Run the Deployment Script
 
 - Open PowerShell as an administrator.
 - Execute the deployment script:
