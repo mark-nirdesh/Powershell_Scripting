@@ -1,6 +1,6 @@
 # Deployment of Automation Setup for Windows Networked PCs using Powershell
 
-## Prepare and Securely Store Credentials = credentials.xml`
+## Prepare and Securely Store Credentials = credentials.xml
 
 - Create an XML credential file
     
@@ -18,8 +18,7 @@
     > `This file stores your credentials securely and can only be decrypted by the same user on the same machine.`
     > 
 
-## Create the Excel File for IP_address & MAC_address 
-`= NetworkDevices.csv`
+## Create the Excel File for IP_address & MAC_address = NetworkDevices.csv
 
 - Find the IP address and populate the ARP table
     
@@ -85,11 +84,10 @@
     > `This script uses `arp -a` command to retrieve the ARP table, which contains IP address-to-MAC address mappings store it into excel file at changed directory.`
     > 
     
-    ## Install Prerequisite on the HOST machine to deploy the script =SetupAutomation.ps1
+    ## Install Prerequisite on the HOST machine to deploy the script = SetupAutomation.ps1
     
 
-## Installs necessary modules on the Host machine  
-`= prerequisite.ps1`
+## Installs necessary modules on the Host machine  = prerequisite.ps1
 
 <aside>
 💡
@@ -144,7 +142,7 @@ Run this script with ADMIN privileges.
     This output should you get!
     
 
-## **Create the PreDeployment Script = Pre**DeployScript.ps1
+## Create the PreDeployment Script = PreDeployScript.ps1
 
 - For installing Prerequisite on the desired IP address (always modify the file NetworkDevices.csv )
     
@@ -194,12 +192,10 @@ Run this script with ADMIN privileges.
     > `Script reads the IP addresses from the Excel file :` NetworkDevices.csv `, retrieves the stored` “IP_address” `, and executes` prerequisite.ps1 `on each remote machine.`
     > 
 
-## **Execute the Deployment**
+## Execute the Deployment
 
 <aside>
-💡
-
-**Run the Deployment Script**
+💡**Run the Deployment Script**
 
 - Open PowerShell as an administrator.
 - Execute the deployment script:
