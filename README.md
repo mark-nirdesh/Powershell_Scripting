@@ -68,7 +68,7 @@
     $arpTable | ForEach-Object {
         if ($_ -match "(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9-]{17})") {
             $device = [PSCustomObject]@{
-                IPAddress  = $matches[1]
+                IP  = $matches[1]
                 MACAddress = $matches[2]
             }
             $networkDevices += $device
