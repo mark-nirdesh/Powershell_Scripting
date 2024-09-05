@@ -46,7 +46,31 @@
     }
     
     ```
-    
+    ```powershell
+    # Define the base IP and subnet
+$baseIP = "10.88.18."
+$startRange = 1
+$endRange = 254
+
+# Create a list of IP addresses
+$ipList = for ($i = $startRange; $i -le $endRange; $i++) {
+    "$baseIP$i"
+}
+
+# Use parallel processing to ping IPs
+$ipList | ForEach-Object -Parallel {
+    $currentIP = $_
+    $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
+
+    # Output the result
+    if ($pingResult) {
+        "$currentIP is reachable."
+    } else {
+        "$currentIP is not reachable."
+    }
+} -ThrottleLimit 50  # Adjust the throttle limit based on system resources
+
+   ```
     > `This Script pings each IP once; you can modify the`-Count`parameter to increase the number of ping attempts.   The Script will not ping the network and broadcast addresses (`10.88.18.0`and`10.88.18.255) `which are typically not assigned to hosts.`
     > 
 - Get the ARP table content and store it in an Excel file with “IP_address” and “MAC_address” columns
