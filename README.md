@@ -47,28 +47,40 @@
     
     ```
     ```powershell
-    # Define the base IP and subnet
-        $baseIP = "10.88.18."
-        $startRange = 1
-        $endRange = 254
+                # Define the base IP and subnet
+                $baseIP = "10.88.18."
+                $startRange = 1
+                $endRange = 254
 
-        # Create a list of IP addresses
-        $ipList = for ($i = $startRange; $i -le $endRange; $i++) {
-            "$baseIP$i"
-        }
+                # Create an array to hold the job objects
+                $jobs = @()
 
-        # Use parallel processing to ping IPs
-        $ipList | ForEach-Object -Parallel {
-            $currentIP = $_
-            $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
+                # Loop through all possible IPs in the subnet and start a job for each ping
+                for ($i = $startRange; $i -le $endRange; $i++) {
+                $currentIP = "$baseIP$i"
 
-     # Output the result
-            if ($pingResult) {
-                "$currentIP is reachable."
-                } else {
-                "$currentIP is not reachable."
-            }
-        } -ThrottleLimit 50  # Adjust the throttle limit based on system resources
+                # Start a background job for each IP ping and store the job object
+                $jobs += Start-Job -ScriptBlock {
+                $currentIP = $using:currentIP
+                $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
+
+                # Output the result
+                if ($pingResult) {
+                    "$currentIP is reachable."
+                    } else {
+                    "$currentIP is not reachable."
+                    }
+                }
+}
+
+# Wait for all jobs to complete
+$jobs | ForEach-Object { 
+    $job = $_
+    Wait-Job $job
+    Receive-Job $job
+    Remove-Job $job
+}
+
 
     ```
     > `This Script pings each IP once; you can modify the`-Count`parameter to increase the number of ping attempts.   The Script will not ping the network and broadcast addresses (`10.88.18.0`and`10.88.18.255) `which are typically not assigned to hosts.`
