@@ -70,16 +70,16 @@
                     } else {
                     "$currentIP is not reachable."
                     }
-                }
-}
+                    }
+                    }
 
-# Wait for all jobs to complete
-$jobs | ForEach-Object { 
-    $job = $_
-    Wait-Job $job
-    Receive-Job $job
-    Remove-Job $job
-}
+                # Wait for all jobs to complete
+                    $jobs | ForEach-Object { 
+                    $job = $_
+                    Wait-Job $job
+                    Receive-Job $job
+                    Remove-Job $job
+                }
 
 
     ```
