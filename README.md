@@ -51,8 +51,7 @@
 
                 # Final message
                 Write-Host "All restart commands have been sent."
-
-        ```
+    ```
     
     > `This script will restart Computer1, Computer2, and Computer3 immediately (/r for restart, /t 0 to restart with no             delay).`
     > 
