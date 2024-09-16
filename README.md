@@ -18,6 +18,50 @@
     > `This file stores your credentials securely and can only be decrypted by the same user on the same machine.`
     > 
 
+## Powershell script to restart multiple PCs at same time
+
+- 
+    
+    > Change IPaddress
+    
+    ```powershell
+    # List of IP addresses to restart
+            $computers = @("192.168.1.10", "192.168.1.11", "192.168.1.12", "192.168.1.13", "192.168.1.14")
+
+            # Prompt for credentials to connect to the remote machines
+            $credential = Get-Credential
+
+            # Loop through each IP address and restart them
+                foreach ($computer in $computers) {
+                    try {
+                    # Print message to indicate restart is starting
+                    Write-Host "Attempting to restart $computer..."
+
+                    # Restart the computer using the IP address
+                    Restart-Computer -ComputerName $computer -Force -Credential $credential -ErrorAction Stop
+
+                        # Print success message
+                            Write-Host "$computer has been successfully restarted."
+                        }
+                    catch {
+                        # Print error message if restart fails
+                                    Write-Host "Failed to restart $computer. Error: $_" -ForegroundColor Red
+                            }
+                                                }
+
+# Final message
+Write-Host "All restart commands have been sent."
+
+    ```
+    
+    > `This script will restart Computer1, Computer2, and Computer3 immediately (/r for restart, /t 0 to restart with no delay).`
+    > 
+
+
+
+
+
+
 ## Create the Excel File for IP_address & MAC_address = NetworkDevices.csv
 
 - Find the IP address and populate the ARP table
