@@ -54,7 +54,7 @@
 
         ```
     
-    > `This script will restart Computer1, Computer2, and Computer3 immediately (/r for restart, /t 0 to restart with no delay).`
+    > `This script will restart Computer1, Computer2, and Computer3 immediately (/r for restart, /t 0 to restart with no             delay).`
     > 
 
 
