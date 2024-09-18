@@ -164,7 +164,32 @@
     > 
     
    
-    
+    ```powershell
+               # Define the path to the IP addresses file
+        $ipListFile = "C:\Users\Helheim\Desktop\ip_addresses.txt"
+
+        # Read the IP addresses from the file
+        $ipAddresses = Get-Content -Path $ipListFile
+
+        # Define the username and password
+        $username = ""
+        $password = ""
+
+        # Open RDP for each IP address
+        foreach ($ip in $ipAddresses) {
+        # Create a secure string for the password
+        $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+
+        # Create a credential object
+        $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
+
+        # Start RDP session
+        mstsc /v:$ip
+                                    }
+
+    ```
+     > `This script will start the RDP-GUI connection with Username and Password given..`
+     > 
 
 ## Installs necessary modules on the Host machine  = prerequisite.ps1
 
