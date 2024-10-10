@@ -93,43 +93,7 @@
     }
     
     ```
-    ```powershell
-                # Define the base IP and subnet
-                $baseIP = "10.88.18."
-                $startRange = 1
-                $endRange = 254
-
-                # Create an array to hold the job objects
-                $jobs = @()
-
-                # Loop through all possible IPs in the subnet and start a job for each ping
-                for ($i = $startRange; $i -le $endRange; $i++) {
-                $currentIP = "$baseIP$i"
-
-                # Start a background job for each IP ping and store the job object
-                $jobs += Start-Job -ScriptBlock {
-                $currentIP = $using:currentIP
-                $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
-
-                # Output the result
-                if ($pingResult) {
-                    "$currentIP is reachable."
-                    } else {
-                    "$currentIP is not reachable."
-                    }
-                    }
-                    }
-
-                # Wait for all jobs to complete
-                    $jobs | ForEach-Object { 
-                    $job = $_
-                    Wait-Job $job
-                    Receive-Job $job
-                    Remove-Job $job
-                }
-
-
-    ```
+    
     > `This Script pings each IP once; you can modify the`-Count`parameter to increase the number of ping attempts.   The Script will not ping the network and broadcast addresses (`10.88.18.0`and`10.88.18.255) `which are typically not assigned to hosts.`
     > 
 - Get the ARP table content and store it in an Excel file with “IP_address” and “MAC_address” columns
@@ -193,8 +157,64 @@
 
     ```
      > `This script will start the RDP-GUI connection with Username and Password given..`
-     > 
+     >
 
+
+## Make the static Static IP based on the Device Name = NetworkDevices.csv
+
+- Copy and paste this Powershell script to each till and execute.
+    
+    Nothing to Change 
+    
+    ```powershell
+       # Get the current computer's device name (hostname)
+        $deviceName = (Get-ComputerInfo).CsName
+
+        # Define the IP configuration based on the device name format "NLUK0XXXXT00Y"
+        if ($deviceName -match "^NLUK0(\d{2})(\d{2})T00(\d)$") {
+        $xx = $matches[1]  # Extract the first 2 digits for XX
+        $yy = $matches[2]  # Extract the second 2 digits for YY
+        $y = $matches[3]   # Extract the Y digit for the last octet
+
+        # Construct the static IP based on the format 10.XX.YY.Y
+        $staticIP = "10.$xx.$yy.$y"
+        $subnetMask = "255.255.255.0"
+        $defaultGateway = "10.$xx.$yy.100"  # Default gateway based on XX and YY, ending in .100
+        $preferredDNS = "10.120.6.70"
+        $alternateDNS = "8.8.8.8"
+
+        # Get the Ethernet adapter (only the Ethernet interface, no Wi-Fi or virtual adapters)
+        $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
+
+        if ($ethernetAdapter) {
+        $interfaceIndex = $ethernetAdapter.ifIndex
+
+        # Check if the IP already exists on the interface
+        $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 | Where-Object { $_.IPAddress -eq $staticIP }
+
+        # Remove the existing IP address if it matches the static IP
+        if ($existingIP) {
+            Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false
+            Write-Host "Removed existing IP address: $($existingIP.IPAddress)"
+        }
+
+        # Set the static IP address, subnet mask, and default gateway for the Ethernet adapter
+        New-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $staticIP -PrefixLength 24 -DefaultGateway $defaultGateway
+
+        # Set the preferred and alternate DNS servers
+        Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $preferredDNS, $alternateDNS
+
+        Write-Host "Static IP configuration applied to Ethernet: $staticIP on device $deviceName"
+        } else {
+        Write-Host "No active Ethernet adapter found on $deviceName"
+        }
+        } else {
+        Write-Host "Device name does not match the required format: NLUK0XXXXT00Y"
+        }
+    ```
+    
+    > `This Script will does the static IP of PC and it will disconnect from RDP.`
+    > 
 ## Installs necessary modules on the Host machine  = prerequisite.ps1
 
 <aside>
