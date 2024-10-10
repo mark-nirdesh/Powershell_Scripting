@@ -59,8 +59,49 @@
     
     > `This script will restart Computer1, Computer2, and Computer3 immediately (/r for restart, /t 0 to restart with no             delay).`
     > 
+        
+## Powershell script to Shutdown multiple PCs at the same time
+
+- 
+    
+    > Change IPaddress
+    
+    ```powershell
+                   # Path to the file containing the list of IP addresses
+                    $ipFilePath = "C:\path\to\ip.txt"
+
+                    # Read the IP addresses from the file into a variable
+                    $computers = Get-Content $ipFilePath
+
+                    # Prompt for credentials to connect to the remote machines
+                    $credential = Get-Credential
+
+                    # Loop through each IP address and shut them down
+                    foreach ($computer in $computers) {
+                    try {
+                            # Print message to indicate shutdown is starting
+                            Write-Host "Attempting to shut down $computer..."
+
+                            # Shut down the computer using the IP address
+                            Stop-Computer -ComputerName $computer -Force -Credential $credential -ErrorAction Stop
+
+                            # Print success message
+                            Write-Host "$computer has been successfully shut down."
+                    }
+                    catch {
+                    # Print error message if shutdown fails
+                    Write-Host "Failed to shut down $computer. Error: $_" -ForegroundColor Red
+                    }
+                    }
+
+                    # Final message
+                    Write-Host "All shutdown commands have been sent."
 
 
+    ```
+    
+    > `This script will shutdown the PC mentioned in the IP.txt files  immediately.`
+    > 
 
 
 
