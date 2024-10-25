@@ -221,8 +221,8 @@
         $staticIP = "10.$xx.$yy.$y"
         $subnetMask = "255.255.255.0"
         $defaultGateway = "10.$xx.$yy.100"  # Default gateway based on XX and YY, ending in .100
-        $preferredDNS = "10.120.6.70"
-        $alternateDNS = "8.8.8.8"
+        $preferredDNS = "10.96.200.170"
+        $alternateDNS = "10.80.205.18"
 
         # Get the Ethernet adapter (only the Ethernet interface, no Wi-Fi or virtual adapters)
         $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
