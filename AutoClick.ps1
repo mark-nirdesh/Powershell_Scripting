@@ -31,3 +31,20 @@ Start-Sleep -Seconds 5
 
 # Continue with additional scripted actions
 # Replace the placeholder actions with actual commands for further navigation and interaction
+
+
+
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+function Get-MousePosition {
+    $Point = [System.Windows.Forms.Cursor]::Position
+    return "$($Point.X), $($Point.Y)"
+}
+
+while ($true) {
+    $position = Get-MousePosition
+    Write-Host "Mouse position: $position"
+    Start-Sleep -Milliseconds 500
+}
