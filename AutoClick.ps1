@@ -1,9 +1,4 @@
-# Deployment of Automation Setup for Windows Networked PCs using PowerShell
-
-## Prepare and Securely Store Credentials in `credentials.xml`
-
-```powershell
-# Define UserID and Password
+﻿# Define UserID and Password
 $userID = "YourUserID"
 $password = "YourPassword"
 
@@ -14,10 +9,11 @@ $password = "YourPassword"
 Add-Type -AssemblyName System.Windows.Forms
 
 # Simulate opening an application (replace with your actual application executable path)
-Start-Process "C:\Path\To\Application.exe"
+Start-Process "C:\Windows\notepad.exe"
 
 # Wait for the application to load
 Start-Sleep -Seconds 5
+
 
 # Send the UserID and Password, pressing Enter after each
 [System.Windows.Forms.SendKeys]::SendWait("$UserID{ENTER}")
