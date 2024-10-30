@@ -48,3 +48,53 @@ while ($true) {
     Write-Host "Mouse position: $position"
     Start-Sleep -Milliseconds 500
 }
+
+
+
+
+
+# Adding C# code to PowerShell to use native mouse and keyboard functionalities
+Add-Type @"
+    using System;
+    using System.Runtime.InteropServices;
+
+    public static class MouseOperations {
+        [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
+        public static extern bool SetCursorPosition(int X, int Y);
+
+        [DllImport("user32.dll")]
+        public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+
+        public const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        public const int MOUSEEVENTF_LEFTUP = 0x04;
+
+        public static void PerformClick(int x, int y) {
+            SetCursorPosition(x, y);
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+        }
+    }
+"@ 
+
+# Function to move the mouse to a position and click
+function Click-AtPosition {
+    param (
+        [int]$x,
+        [int]$y
+    )
+    [MouseOperations]::PerformClick($x, $y)
+    Start-Sleep -Milliseconds 100
+}
+
+# Assuming the application is already running, use Alt+Tab to focus
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.SendKeys]::SendWait("%{TAB}")
+Start-Sleep -Seconds 1
+
+# Example positions for clicks - these need to be adjusted to your specific needs
+# You may need to find these coordinates manually as described before
+Click-AtPosition -x 1847 -y 79  # Example: Clicks at position x=500, y=300
+ # Example: Next click position
+
+# Additional actions can be scripted below using the Click-AtPosition function
+
+
