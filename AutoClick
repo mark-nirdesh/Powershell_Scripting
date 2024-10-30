@@ -1,4 +1,14 @@
-```  
+# Deployment of Automation Setup for Windows Networked PCs using PowerShell
+
+## Prepare and Securely Store Credentials in `credentials.xml`
+
+- **Create an XML credential file**  
+Replace the following placeholders:
+    - `YourPassword`
+    - `YourUsername`
+    - Path to the XML file
+
+```powershell
 # Define UserID and Password
 $userID = "YourUserID"
 $password = "YourPassword"
@@ -14,7 +24,6 @@ Start-Process "C:\Path\To\Application.exe"
 
 # Wait for the application to load
 Start-Sleep -Seconds 5
-
 
 # Send the UserID and Password, pressing Enter after each
 [System.Windows.Forms.SendKeys]::SendWait("$UserID{ENTER}")
@@ -32,4 +41,3 @@ Start-Sleep -Seconds 5
 
 # Continue with additional scripted actions
 # Replace the placeholder actions with actual commands for further navigation and interaction
-```
