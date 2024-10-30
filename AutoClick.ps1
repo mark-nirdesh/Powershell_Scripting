@@ -2,12 +2,6 @@
 
 ## Prepare and Securely Store Credentials in `credentials.xml`
 
-- **Create an XML credential file**  
-Replace the following placeholders:
-    - `YourPassword`
-    - `YourUsername`
-    - Path to the XML file
-
 ```powershell
 # Define UserID and Password
 $userID = "YourUserID"
