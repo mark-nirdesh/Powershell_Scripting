@@ -253,8 +253,74 @@
         Write-Host "Device name does not match the required format: NLUK0XXXXT00Y"
         }
     ```
+
+    
     
     > `This Script will does the static IP of PC and it will disconnect from RDP.`
+    
+
+
+
+
+
+
+
+## Make the static Static IP based on the Device Name = NetworkDevices.csv
+
+- Copy and paste this Powershell script to each till and execute.
+    
+    Nothing to Change 
+    
+    ```powershell
+       # Get the current server's device name (hostname)
+        $deviceName = (Get-ComputerInfo).CsName
+
+        # Define the IP configuration based on the device name format "NLUK0XXXXT00Y"
+        if ($deviceName -match "^NLUK0(\d{2})(\d{2})W00(\d)$") {
+        $xx = $matches[1]  # Extract the first 2 digits for XX
+        $yy = $matches[2]  # Extract the second 2 digits for YY
+        $y = 53   # Extract the Y digit for the last octet
+
+        # Construct the static IP based on the format 10.XX.YY.Y
+        $staticIP = "10.$xx.$yy.$y"
+        $subnetMask = "255.255.255.0"
+        $defaultGateway = "10.$xx.$yy.100"  # Default gateway based on XX and YY, ending in .100
+        $preferredDNS = "10.96.200.170"
+        $alternateDNS = "10.80.205.18"
+
+        # Get the Ethernet adapter (only the Ethernet interface, no Wi-Fi or virtual adapters)
+        $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
+
+        if ($ethernetAdapter) {
+        $interfaceIndex = $ethernetAdapter.ifIndex
+
+        # Check if the IP already exists on the interface
+        $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 | Where-Object { $_.IPAddress -eq $staticIP }
+
+        # Remove the existing IP address if it matches the static IP
+        if ($existingIP) {
+            Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false
+            Write-Host "Removed existing IP address: $($existingIP.IPAddress)"
+        }
+
+        # Set the static IP address, subnet mask, and default gateway for the Ethernet adapter
+        New-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $staticIP -PrefixLength 24 -DefaultGateway $defaultGateway
+
+        # Set the preferred and alternate DNS servers
+        Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $preferredDNS, $alternateDNS
+
+        Write-Host "Static IP configuration applied to Ethernet: $staticIP on device $deviceName"
+        } else {
+        Write-Host "No active Ethernet adapter found on $deviceName"
+        }
+        } else {
+        Write-Host "Device name does not match the required format: NLUK0XXXXW00Y"
+        }
+    ```
+
+    
+    
+    > `This Script will does the static IP of server and it will disconnect from RDP.`
     > 
 ## Installs necessary modules on the Host machine  = prerequisite.ps1
 
