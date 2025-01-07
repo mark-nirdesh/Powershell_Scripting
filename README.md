@@ -201,7 +201,7 @@
      >
 
 
-## Make the static Static IP based on the Device Name
+## Make the static Static IP based on the Device Name = NLUK0XXXXT00Y
 
 - Copy and paste this Powershell script to each till and execute.
     
@@ -265,7 +265,7 @@
 
 
 
-## Make the static Static IP based on the Device Name = NetworkDevices.csv
+## Make the static Static IP based on the Device Name = NLUK0XXXXW00Y
 
 - Copy and paste this Powershell script to each till and execute.
     
