@@ -267,7 +267,7 @@
 
 ## Make the static Static IP based on the Device Name = NLUK0XXXXW00Y
 
-- Copy and paste this Powershell script to each till and execute.
+- Copy and paste this Powershell script to each server and execute.
     
     Nothing to Change 
     
