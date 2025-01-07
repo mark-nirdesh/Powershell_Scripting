@@ -201,7 +201,7 @@
      >
 
 
-## Make the static Static IP based on the Device Name = NetworkDevices.csv
+## Make the static Static IP based on the Device Name
 
 - Copy and paste this Powershell script to each till and execute.
     
@@ -279,7 +279,7 @@
         if ($deviceName -match "^NLUK0(\d{2})(\d{2})W00(\d)$") {
         $xx = $matches[1]  # Extract the first 2 digits for XX
         $yy = $matches[2]  # Extract the second 2 digits for YY
-        $y = 53   # Extract the Y digit for the last octet
+        $y = 52   # Extract the Y digit for the last octet
 
         # Construct the static IP based on the format 10.XX.YY.Y
         $staticIP = "10.$xx.$yy.$y"
