@@ -114,24 +114,40 @@
     Change line 2 : ” $baseIP = “10.88.18.” for appropriate network.
     
     ```powershell
-    # Define the base IP and subnet
-    $baseIP = "10.88.18."
-    $startRange = 1
-    $endRange = 254
-    
-    # Loop through all possible IPs in the subnet
-    for ($i = $startRange; $i -le $endRange; $i++) {
-        $currentIP = "$baseIP$i"
-        # Test the connection (ping) and select only the StatusCode property
-        $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
-    
-        # Check if the ping was successful
-        if ($pingResult) {
-            Write-Output "$currentIP is reachable."
-        } else {
-            Write-Output "$currentIP is not reachable."
+        # Output file path
+        $outputFile = "C:\Users\Octopus\Desktop\NetworkDevices.csv"
+
+        # Initialize an empty array to store results
+        $networkDevices = @()
+
+        # Dynamically determine a valid IPv4 address for the network interface
+        $selectedIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match '\d+\.\d+\.\d+\.\d+'}).IPAddress[0]
+
+        if (-not $selectedIP) {
+            Write-Host "No valid IPv4 addresses found on the system."
+            exit
         }
-    }
+
+        # Run the arp command and capture the output for the selected IP
+        $arpTable = arp -a -N $selectedIP
+
+        # Parse the output to extract IP and MAC addresses
+        $arpTable | ForEach-Object {
+            if ($_ -match "(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9-]{17})") {
+                $macAddress = $matches[2] -replace "-", ":"
+                $device = [PSCustomObject]@{
+                    IP          = $matches[1]
+                    MACAddress  = $macAddress
+                }
+                $networkDevices += $device
+            }
+        }
+
+        # Export the results to a CSV file
+        $networkDevices | Export-Csv -Path $outputFile -NoTypeInformation
+
+        Write-Host "IP and MAC addresses have been saved to $outputFile"
+
     
     ```
     
