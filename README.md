@@ -2,7 +2,7 @@
 
 ## Populate ARP table of Network via pinging to each devices 
 
-- Create an XML credential file
+- Run as Administrator in Powershell ISE
     
     > Change -Count for faster pinging
     
