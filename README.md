@@ -1,18 +1,31 @@
 # Deployment of Automation Setup for Windows Networked PCs using Powershell
 
-## Prepare and Securely Store Credentials = credentials.xml
+## Populate ARP table of Network via pinging to each devices 
 
 - Create an XML credential file
     
-    > Change YourPassword
-    > Change YourUsername
-    > Change Path to xml file
+    > Change -Count for faster pinging
     
     ```powershell
-    $username = "YourUsername"
-    $password = ConvertTo-SecureString "YourPassword" -AsPlainText -Force
-    $cred = New-Object System.Management.Automation.PSCredential ($username, $password)
-    $cred | Export-CliXml -Path "C:\path\to\credentials.xml"
+    # Define the base IP and subnet
+        $baseIP = "10.88.18."
+        $startRange = 1
+        $endRange = 254
+
+        # Loop through all possible IPs in the subnet
+        for ($i = $startRange; $i -le $endRange; $i++) {
+            $currentIP = "$baseIP$i"
+            # Test the connection (ping) and select only the StatusCode property
+            $pingResult = Test-Connection -ComputerName $currentIP -Count 1 -Quiet
+
+            # Check if the ping was successful
+            if ($pingResult) {
+                Write-Output "$currentIP is reachable."
+                } else {
+            Write-Output "$currentIP is not reachable."
+            }
+            }
+
     ```
     
     > `This file stores your credentials securely and can only be decrypted by the same user on the same machine.`
