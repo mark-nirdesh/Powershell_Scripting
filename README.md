@@ -145,40 +145,7 @@
     
     > `This Script pings each IP once; you can modify the`-Count`parameter to increase the number of ping attempts.   The Script will not ping the network and broadcast addresses (`10.88.18.0`and`10.88.18.255) `which are typically not assigned to hosts.`
     > 
-- Get the ARP table content and store it in an Excel file with “IP_address” and “MAC_address” columns
-    
-    > Change line 2 : Output file path
-    > Change line 8 : the IPaddress for ARP scan
-    
-    ```powershell
-    # Output file path
-    $outputFile = "C:\path\to\output\NetworkDevices.csv"
-    
-    # Initialize an empty array to store results
-    $networkDevices = @()
-    
-    # Run the arp command and capture the output
-    $arpTable = arp -a -N 10.88.18.__
-    
-    # Parse the output to extract IP and MAC addresses
-    $arpTable | ForEach-Object {
-        if ($_ -match "(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9-]{17})") {
-            $device = [PSCustomObject]@{
-                IP  = $matches[1]
-                MACAddress = $matches[2]
-            }
-            $networkDevices += $device
-        }
-    }
-    
-    # Export the results to a CSV file
-    $networkDevices | Export-Csv -Path $outputFile -NoTypeInformation
-    
-    Write-Host "IP and MAC addresses have been saved to $outputFile"
-    ```
-    
-    > `This script uses `arp -a` command to retrieve the ARP table, which contains IP address-to-MAC address mappings store it into excel file at changed directory.`
-    > 
+
     
    
     ```powershell
