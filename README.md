@@ -189,7 +189,7 @@
      >
 
 
-## Make the static Static IP based on the Device Name = NLUK0XXXXT00Y
+## Make the static Static IP based on the Device Name = NLUK0XXXXT0YY
 
 - Copy and paste this Powershell script to each till and execute.
     
@@ -235,12 +235,16 @@
         Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $preferredDNS, $alternateDNS
 
         Write-Host "Static IP configuration applied to adapter: $($ethernetAdapter.Name) with IP: $staticIP"
-    } else {
-        Write-Host "No active network adapter found on $deviceName"
-    }
-    } else {
-    Write-Host "Device name does not match the required format: NLUK0XXXXT0YY"
-    }
+        }
+        else
+        {
+            Write-Host "No active network adapter found on $deviceName"
+        }
+        }
+         
+        else {
+            Write-Host "Device name does not match the required format: NLUK0XXXXT0YY"
+        }
 
     ```
 
