@@ -269,47 +269,51 @@
        # Get the current server's device name (hostname)
         $deviceName = (Get-ComputerInfo).CsName
 
-        # Define the IP configuration based on the device name format "NLUK0XXXXT00Y"
-        if ($deviceName -match "^NLUK0(\d{2})(\d{2})W00(\d)$") {
-        $xx = $matches[1]  # Extract the first 2 digits for XX
-        $yy = $matches[2]  # Extract the second 2 digits for YY
-        $y = 52   # Extract the Y digit for the last octet
+        # Define the regex pattern to extract XXXX from the device name "NLUK0XXXXW001"
+        if ($deviceName -match "^NLUK0(\d{4})W001$") {
+            $xxxx = $matches[1]  # Extract the XXXX part
 
-        # Construct the static IP based on the format 10.XX.YY.Y
-        $staticIP = "10.$xx.$yy.$y"
-        $subnetMask = "255.255.255.0"
-        $defaultGateway = "10.$xx.$yy.100"  # Default gateway based on XX and YY, ending in .100
-        $preferredDNS = "10.96.200.170"
-        $alternateDNS = "10.80.205.18"
+            # Split XXXX into two parts
+            $xx1 = [int]$xxxx.Substring(0,2)  # Convert first two digits to integer to remove leading zeros
+            $xx2 = [int]$xxxx.Substring(2,2)  # Convert last two digits to integer to remove leading zeros
+            $y = 52  # Fixed last octet
 
-        # Get the Ethernet adapter (only the Ethernet interface, no Wi-Fi or virtual adapters)
-        $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
+             # Construct the static IP based on the format 10.XX1.XX2.Y
+            $staticIP = "10.$xx1.$xx2.$y"
+            $subnetMask = "255.255.255.0"
+            $defaultGateway = "10.$xx1.$xx2.100"  # Default gateway ending in .100
+            $preferredDNS = "10.96.200.170"
+            $alternateDNS = "10.80.205.18"
 
-        if ($ethernetAdapter) {
-        $interfaceIndex = $ethernetAdapter.ifIndex
+            # Get the Ethernet adapter (only the Ethernet interface, excluding Wi-Fi or virtual adapters)
+            $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
 
-        # Check if the IP already exists on the interface
-        $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 | Where-Object { $_.IPAddress -eq $staticIP }
+            if ($ethernetAdapter) {
+                $interfaceIndex = $ethernetAdapter.ifIndex
 
-        # Remove the existing IP address if it matches the static IP
-        if ($existingIP) {
-            Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false
-            Write-Host "Removed existing IP address: $($existingIP.IPAddress)"
-        }
+                # Check if the IP already exists on the interface
+                $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 | Where-Object { $_.IPAddress -eq $staticIP }
 
-        # Set the static IP address, subnet mask, and default gateway for the Ethernet adapter
-        New-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $staticIP -PrefixLength 24 -DefaultGateway $defaultGateway
+                # Remove the existing IP address if it matches the static IP
+                if ($existingIP) {
+                    Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false
+                    Write-Host "Removed existing IP address: $($existingIP.IPAddress)"
+                }
 
-        # Set the preferred and alternate DNS servers
-        Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $preferredDNS, $alternateDNS
+                # Set the static IP address, subnet mask, and default gateway for the Ethernet adapter
+                New-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $staticIP -PrefixLength 24 -DefaultGateway $defaultGateway
 
-        Write-Host "Static IP configuration applied to Ethernet: $staticIP on device $deviceName"
-        } else {
-        Write-Host "No active Ethernet adapter found on $deviceName"
-        }
-        } else {
-        Write-Host "Device name does not match the required format: NLUK0XXXXW00Y"
-        }
+                # Set the preferred and alternate DNS servers
+                Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $preferredDNS, $alternateDNS
+
+                Write-Host "Static IP configuration applied: $staticIP on device $deviceName"
+                    } else {
+                Write-Host "No active Ethernet adapter found on $deviceName"
+                }
+                } else {
+                    Write-Host "Device name does not match the required format: NLUK0XXXXW001"
+                }
+
     ```
 
     
