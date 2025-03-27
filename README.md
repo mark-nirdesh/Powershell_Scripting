@@ -286,20 +286,19 @@
                 $preferredDNS = "10.96.200.170"
                 $alternateDNS = "10.80.205.18"
 
-                # Get the Ethernet adapter (only the Ethernet interface, excluding Wi-Fi or virtual adapters)
-                $ethernetAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" -and $_.Status -eq "Up" } | Select-Object -First 1
-
                 if ($ethernetAdapter) {
                     $interfaceIndex = $ethernetAdapter.ifIndex
+                    Write-Host "Using Adapter: $($ethernetAdapter.Name), Interface Index: $interfaceIndex"
 
                     # Check if the IP already exists on the interface
-                    $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 | Where-Object { $_.IPAddress -eq $staticIP }
+                    $existingIP = Get-NetIPAddress -InterfaceIndex $interfaceIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -eq $staticIP }
 
-                    # Remove the existing IP address if it matches the static IP
                     if ($existingIP) {
-                        Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false
-                        Write-Host "Removed existing IP address: $($existingIP.IPAddress)"
-                            }
+                        Write-Host "Removing existing IP address: $($existingIP.IPAddress)"
+                        Remove-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $existingIP.IPAddress -Confirm:$false -ErrorAction Stop
+                    }
+
+                
 
                     # Set the static IP address, subnet mask, and default gateway for the Ethernet adapter
                     New-NetIPAddress -InterfaceIndex $interfaceIndex -IPAddress $staticIP -PrefixLength 24 -DefaultGateway $defaultGateway
