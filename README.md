@@ -206,8 +206,8 @@
                     $yy = [int]$matches[2]  # Convert YY to an integer to remove leading zeros
 
                 # Construct the static IP based on the format 10.XX.XX.YY
-                    $xx1 = $xxxx.Substring(0, 2)  # First two digits of XXXX
-                    $xx2 = $xxxx.Substring(2, 2)  # Last two digits of XXXX
+                    $xx1 = [int]$xxxx.Substring(0, 2)  # First two digits of XXXX
+                    $xx2 = [int]$xxxx.Substring(2, 2)  # Last two digits of XXXX
                     $staticIP = "10.$xx1.$xx2.$yy"
                     $subnetMask = "255.255.255.0"
                     $defaultGateway = "10.$xx1.$xx2.100"
